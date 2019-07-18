@@ -1,0 +1,42 @@
+version: "3.4"
+
+services:
+  redis:
+    env_file:
+      - ".env"
+    image: "redis:5.0.4-stretch"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stop_grace_period: "${DOCKER_STOP_GRACE_PERIOD:-3s}"
+    volumes:
+      - "redis:/data"
+
+  web:
+    build:
+      context: "."
+    depends_on:
+      - "redis"
+    env_file:
+      - ".env"
+    ports:
+      - "8000:8000"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    volumes:
+      - "${DOCKER_WEB_VOLUME:-./api/tmp:/formatdb_flask/api/tmp}"
+
+  worker:
+    build:
+      context: "."
+      args:
+        - "FLASK_ENV=${FLASK_ENV:-production}"
+    command: celery worker -B -l info -A api.task
+    depends_on:
+      - "redis"
+    env_file:
+      - ".env"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    volumes:
+      - "${DOCKER_WEB_VOLUME:-./api/tmp:/formatdb_flask/api/tmp}"
+
+volumes:
+  redis: {}
+

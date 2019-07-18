@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Celery Flask Application</title>
+</head>
+   <body>
+      <p>Provide a tab separated file with two columns, the first with SMILE strings and the second with an unique string ID.</p><br>
+   
+      <form action = "/uploader" method = "POST" 
+         enctype = "multipart/form-data">
+         <LABEL for="email">Email address: </LABEL>
+         <input type = "text" name = "email" size="50" /><br>
+         <input type = "file" name = "file" /><br>
+         <input type = "submit"/><br>
+      </form>
+      
+   </body>
+</html>
