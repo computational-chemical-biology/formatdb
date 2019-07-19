@@ -1,8 +1,8 @@
 server:
-	docker-compose server -d
+	docker-compose up -d
 
 interactive:
-	docker-compose server
+	docker-compose up
 
 build:
 	docker-compose build
