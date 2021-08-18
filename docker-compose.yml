@@ -10,7 +10,7 @@ services:
     volumes:
       - "redis:/data"
 
-  web:
+  formater:
     build:
       context: "."
     depends_on:
@@ -29,6 +29,10 @@ services:
       args:
         - "FLASK_ENV=${FLASK_ENV:-production}"
     command: celery worker -B -l info -A api.task
+    deploy:
+      resources:
+        limits:
+          memory: 8000M 
     depends_on:
       - "redis"
     env_file:

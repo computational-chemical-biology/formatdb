@@ -35,7 +35,7 @@ def longtask(inputfile, email):
         msg['Subject'] = 'Conversion from NAP' 
 
         text = ("Your data is available for download here:\n"+
-	       "http://0.0.0.0:8000/download/"+inputfile+"\n"+
+	       "http://dorresteinappshub.ucsd.edu:5002/download/"+inputfile+"\n"+
 	       "WARNING: the data will be available for a single download.")
         part1 = MIMEText(text, 'plain') 
         msg.attach(part1)
