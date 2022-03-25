@@ -33,18 +33,40 @@ def query_inchikey(keylist):
             data = json.loads(fn) 
 
             mdict['inchikey'] = key 
-            if sum([bool(re.match('kingdom', x)) for x in data.keys()]) > 0 and data['class'] is not None:
+            if 'kingdom' not in data.keys():
+                mdict['kingdom'] = ''
+                mdict['superclass'] = ''
+                mdict['class'] = ''
+                mdict['subclass'] = ''
+                mdict['direct_parent'] = ''
+                mdict['molecular_framework'] = ''
+                dmetadatalist.append(mdict)
+                continue
+
+            if data['kingdom']!=None:
                 mdict['kingdom'] = data['kingdom']['name']
-            if sum([bool(re.match('superclass', x)) for x in data.keys()]) > 0 and data['superclass'] is not None :
+            else:
+                mdict['kingdom'] = ''
+            if data['superclass']!=None:
                 mdict['superclass'] = data['superclass']['name']
-            if sum([bool(re.match('class', x)) for x in data.keys()]) > 0 and data['class'] is not None :
+            else:
+                mdict['superclass'] = ''
+            if data['class']!=None:
                 mdict['class'] = data['class']['name']
-            if sum([bool(re.match('subclass', x)) for x in data.keys()]) > 0 and data['subclass'] is not None:
+            else:
+                mdict['class'] = ''
+            if data['subclass']!=None:
                 mdict['subclass'] = data['subclass']['name']
-            if sum([bool(re.match('direct_parent', x)) for x in data.keys()]) > 0 and data['direct_parent'] is not None:
+            else:
+                mdict['subclass'] = ''
+            if data['direct_parent'] is not None:
                 mdict['direct_parent'] = data['direct_parent']['name']
-            if sum([bool(re.match('molecular_framework', x)) for x in data.keys()]) > 0 and data['molecular_framework'] is not None:
+            else:
+                mdict['direct_parent'] = ''
+            if data['molecular_framework'] is not None:
                 mdict['molecular_framework'] = data['molecular_framework']
+            else:
+                mdict['molecular_framework'] = ''
             dmetadatalist.append(mdict)
         #except HTTPError as err:
         else:
