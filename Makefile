@@ -1,5 +1,5 @@
 server:
-	docker-compose up -d
+	docker-compose --compatibility up -d
 
 interactive:
 	docker-compose up
