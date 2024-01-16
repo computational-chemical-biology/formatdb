@@ -3,7 +3,7 @@
 
 # In[1]:
 
-import pandas as pd     
+import pandas as pd
 #from classyfire import *
 from rdkit import Chem
 from rdkit.Chem import rdMolDescriptors as rdMD
@@ -12,6 +12,7 @@ from urllib.request import HTTPError
 import json
 import re
 import os
+from api.npclassify import classify_structure
 
 
 def query_inchikey(keylist):
@@ -20,19 +21,19 @@ def query_inchikey(keylist):
     dmetadatalist = []
     for i in range(len(keylist)):
         key = keylist[i]
-        url = 'http://classyfire.wishartlab.com/entities/' + key + '.json' 
-    
+        url = 'http://classyfire.wishartlab.com/entities/' + key + '.json'
+
         try:
-            r = urlopen(url) 
+            r = urlopen(url)
             fn = r.read().decode('utf8')
         except  HTTPError as err:
             fn = ''
         #try:
         if fn != '':
             mdict = {}
-            data = json.loads(fn) 
+            data = json.loads(fn)
 
-            mdict['inchikey'] = key 
+            mdict['inchikey'] = key
             if 'kingdom' not in data.keys():
                 mdict['kingdom'] = ''
                 mdict['superclass'] = ''
@@ -72,15 +73,15 @@ def query_inchikey(keylist):
         else:
             count_failed += 1
             dmetadatalist.append({})
-    
-    df_metares = pd.DataFrame.from_dict(dmetadatalist)  
+
+    df_metares = pd.DataFrame.from_dict(dmetadatalist)
     return(df_metares)
 
 
-def formatdb(smiles):
+def formatdb(smiles, tool):
     df = pd.read_csv(smiles,  sep='\t', header=None)
     os.remove(smiles)
-    
+
     smi = list(df[0])
     m = [Chem.MolFromSmiles(x) for x in smi]
     inchi = []
@@ -105,32 +106,38 @@ def formatdb(smiles):
             ikey2.append('')
             form.append('')
             exmass.append('')
-    
+
     data = {'inchikey': ikeys, 'MonoisotopicMass': exmass, 'InChI': inchi, 'SMILES': list(df[0]),
                   'Identifier': list(df[1]), 'InChIKey2': ikey2, 'InChIKey1': ikey1, 'MolecularFormula': form}
-    
+
     cn = ["inchikey", "MonoisotopicMass", "InChI", "SMILES", "Identifier", "InChIKey2", "InChIKey1", "MolecularFormula"]
     formdata = pd.DataFrame(data, columns=cn)
-    
-    classy = query_inchikey(ikeys)
-    
+    if tool=='ClassyFire':
+        classy = query_inchikey(ikeys)
+    elif tool=='NPClassifier':
+        classy =[]
+        for i in formdata.index:
+            isglycoside, class_results, superclass_results, pathway_results, path_from_class, path_from_superclass, n_path, fp1, fp2 = classify_structure(formdata.loc[i, 'SMILES'])
+            classy.append([formdata.loc[i, 'inchikey'], '', superclass_results[0], class_results[0], ''])
+        classy = pd.DataFrame(classy)
+        classy.columns = ['inchikey', 'kingdom', 'superclass', 'class', 'subclass']
+    else:
+        raise Exception("Invalid tool option.")
+
     # If the structure do not show a classification, try query
     #in_process = get_class(list(df[0]), chunksize=100)
     #classy = poll(in_process)
-    
+
     classy = classy[['inchikey', 'kingdom', 'superclass', 'class', 'subclass']]
     classy.columns = ['inchikey', 'kingdom_name', 'superclass_name', 'class_name', 'subclass_name']
-    
+
     formfinal = pd.merge(formdata, classy, how='left', on=['inchikey'])
-    
+
     formfinal = formfinal.fillna('')
     formfinal.drop('inchikey', axis=1, inplace=True)
-    
+
     id = [x for x in range(len(ikeys)) if ikeys[x]=='']
     formfinal.drop(formfinal.index[id], inplace=True)
-    
+
     formfinal.to_csv(smiles+'_FORMATED.txt', index=False, sep='\t')
-    return 'Done' 
-    
-
-
+    return 'Done'

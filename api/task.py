@@ -17,10 +17,10 @@ app = celery.Celery('tasks', backend='redis://redis:6379/0',
 psswd = b''
 
 @app.task
-def longtask(inputfile, email):
+def longtask(inputfile, email, tool):
     fls = os.path.join('/formatdb_flask/api/tmp', inputfile)
     try:
-        formated = formatdb(fls)
+        formated = formatdb(fls, tool)
         server = smtplib.SMTP('smtp.gmail.com', 587)
 	#server.starttls()
         server.connect("smtp.gmail.com",587)
@@ -31,13 +31,13 @@ def longtask(inputfile, email):
 
         msg = MIMEMultipart()
         msg['From'] = 'rsilvabioinfo@gmail.com'
-        msg['To'] = email 
-        msg['Subject'] = 'Conversion from NAP' 
+        msg['To'] = email
+        msg['Subject'] = 'Conversion from NAP'
 
         text = ("Your data is available for download here:\n"+
-	       "http://dorresteinappshub.ucsd.edu:5002/download/"+inputfile+"\n"+
-	       "WARNING: the data will be available for a single download.")
-        part1 = MIMEText(text, 'plain') 
+                "http://seriema.fcfrp.usp.br:5002/download/"+inputfile+"\n"+
+                "WARNING: the data will be available for a single download.")
+        part1 = MIMEText(text, 'plain')
         msg.attach(part1)
         server.sendmail("rsilvabioinfo@gmail.com", email, msg.as_string())
         server.quit()
@@ -52,18 +52,18 @@ def longtask(inputfile, email):
 
         msg = MIMEMultipart()
         msg['From'] = 'rsilvabioinfo@gmail.com'
-        msg['To'] = email 
-        msg['Subject'] = 'Conversion from NAP' 
+        msg['To'] = email
+        msg['Subject'] = 'Conversion from NAP'
 
-        formated = 'FAIL' 
+        formated = 'FAIL'
         text = ("Your task appear to have failed here is the error:\n"+
-	        str(exc)+'\n'+
-	       "If you are unable to understant the error reply this email.")
-        part1 = MIMEText(text, 'plain') 
+              str(exc)+'\n'+
+              "If you are unable to understant the error reply this email.")
+        part1 = MIMEText(text, 'plain')
         msg.attach(part1)
         server.sendmail("rsilvabioinfo@gmail.com", email, msg.as_string())
         server.quit()
-    return formated 
+    return formated
 
 
 

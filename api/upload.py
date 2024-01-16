@@ -8,6 +8,7 @@ import os
 from api import task
 
 app = Flask(__name__)
+app.secret_key = 'alura'
 
 @app.route('/upload')
 def upload_temp():
@@ -19,6 +20,8 @@ def upload_file():
       f = request.files['file']
       result = request.form
       email = result['email']
+      tool = result['tool']
+      print(tool)
       #file = request.files.get('file')
       #df = pd.read_table(file)
       task_id = uuid()
@@ -26,7 +29,7 @@ def upload_file():
       #f.save(secure_filename(fls))
       f.save(fls)
       #print(task_id)
-      df = task.longtask.apply_async(args=[task_id, email], task_id=task_id)
+      df = task.longtask.apply_async(args=[task_id, email, tool], task_id=task_id)
       #df = task.longtask.delay(task_id)
       #print(df.status)
       #print(df.task_id)
@@ -51,4 +54,4 @@ def status(task_id):
 
 if __name__ == '__main__':
     #app.run(debug = True)
-    app.run(host='143.107.202.155')
+    app.run(port=5002, debug = True)
