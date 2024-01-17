@@ -11,8 +11,8 @@ RUN echo "source activate formatdb" > ~/.bashrc
 ENV PATH /opt/conda/envs/formatdb/bin:$PATH
 
 COPY . .
-RUN pip install markupsafe==2.0.1
-RUN pip install werkzeug==0.16.0 
+RUN pip install tqdm
+RUN conda install conda-forge::tensorflow
 
 CMD gunicorn -b 0.0.0.0:8000 --access-logfile - "api.upload:app"
 #CMD ["gunicorn", "-c", "python:config.gunicorn", "api.upload:app"]

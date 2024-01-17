@@ -13,7 +13,7 @@ app.secret_key = 'alura'
 @app.route('/upload')
 def upload_temp():
    return render_template('upload.html')
-		
+
 @app.route('/uploader', methods = ['GET', 'POST'])
 def upload_file():
    if request.method == 'POST':
