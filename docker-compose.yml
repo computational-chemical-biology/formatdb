@@ -28,7 +28,7 @@ services:
       context: "."
       args:
         - "FLASK_ENV=${FLASK_ENV:-production}"
-    command: celery worker -B -l info -A api.task
+    command: celery worker -l info -A api.task --pool gevent --loglevel=INFO
     deploy:
       resources:
         limits:
