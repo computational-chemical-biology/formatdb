@@ -118,7 +118,17 @@ def formatdb(smiles, tool):
         classy =[]
         for i in formdata.index:
             isglycoside, class_results, superclass_results, pathway_results, path_from_class, path_from_superclass, n_path, fp1, fp2 = classify_structure(formdata.loc[i, 'SMILES'])
-            classy.append([formdata.loc[i, 'inchikey'], '', superclass_results[0], class_results[0], ''])
+            if len(superclass_results):
+                 supclass = superclass_results[0]
+            else:
+                 supclass = ''
+
+            if len(class_results):
+                 classe = class_results[0]
+            else:
+                 classe = ''
+
+            classy.append([formdata.loc[i, 'inchikey'], '', supclass, classe, ''])
         classy = pd.DataFrame(classy)
         classy.columns = ['inchikey', 'kingdom', 'superclass', 'class', 'subclass']
     else:
