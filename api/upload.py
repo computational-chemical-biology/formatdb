@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, make_response
 from werkzeug import secure_filename
 import pandas as pd
 from celery import uuid
+#import uuid
 from celery.result import AsyncResult
 import os
 
@@ -25,6 +26,7 @@ def upload_file():
       #file = request.files.get('file')
       #df = pd.read_table(file)
       task_id = uuid()
+      #task_id = str(uuid.uuid4())
       fls = os.path.join('/formatdb_flask/api/tmp', task_id)
       #f.save(secure_filename(fls))
       f.save(fls)
