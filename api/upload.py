@@ -22,7 +22,7 @@ def upload_file():
       result = request.form
       email = result['email']
       tool = result['tool']
-      print(tool)
+      oformat = result['oformat']
       #file = request.files.get('file')
       #df = pd.read_table(file)
       task_id = uuid()
@@ -31,7 +31,7 @@ def upload_file():
       #f.save(secure_filename(fls))
       f.save(fls)
       #print(task_id)
-      df = task.longtask.apply_async(args=[task_id, email, tool], task_id=task_id)
+      df = task.longtask.apply_async(args=[task_id, email, tool, oformat], task_id=task_id)
       #df = task.longtask.delay(task_id)
       #print(df.status)
       #print(df.task_id)

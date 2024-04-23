@@ -78,7 +78,7 @@ def query_inchikey(keylist):
     return(df_metares)
 
 
-def formatdb(smiles, tool):
+def formatdb(smiles, tool, oformat):
     df = pd.read_csv(smiles,  sep='\t', header=None)
     os.remove(smiles)
 
@@ -155,5 +155,11 @@ def formatdb(smiles, tool):
     id = [x for x in range(len(ikeys)) if ikeys[x]=='']
     formfinal.drop(formfinal.index[id], inplace=True)
 
-    formfinal.to_csv(smiles+'_FORMATED.txt', index=False, sep='\t')
+    if oformat=='TSV':
+        formfinal.to_csv(smiles+'_FORMATED.txt', index=False, sep='\t')
+    elif oformat=='PSV':
+        formfinal.to_csv(smiles+'_FORMATED.txt', index=False, sep='|')
+    else:
+        raise Exception("Format should be either TSV or PSV.")
+
     return 'Done'

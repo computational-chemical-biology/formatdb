@@ -17,10 +17,10 @@ app = celery.Celery('tasks', backend='redis://redis:6379/0',
 psswd = b''
 
 @app.task
-def longtask(inputfile, email, tool):
+def longtask(inputfile, email, tool, oformat):
     fls = os.path.join('/formatdb_flask/api/tmp', inputfile)
     try:
-        formated = formatdb(fls, tool)
+        formated = formatdb(fls, tool, oformat)
         server = smtplib.SMTP('smtp.gmail.com', 587)
 	#server.starttls()
         server.connect("smtp.gmail.com",587)
