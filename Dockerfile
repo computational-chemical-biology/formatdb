@@ -19,8 +19,6 @@ RUN pip install joblib
 RUN pip install gevent 
 #RUN pip install celery --upgrade
 COPY . .
-RUN pip install tqdm
-RUN conda install conda-forge::tensorflow
 
 CMD gunicorn -b 0.0.0.0:8000 --access-logfile - "api.upload:app"
 #CMD ["gunicorn", "-c", "python:config.gunicorn", "api.upload:app"]

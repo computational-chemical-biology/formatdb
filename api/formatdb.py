@@ -95,10 +95,16 @@ def formatdb(smiles, tool):
             inchi.append(Chem.rdinchi.MolToInchi(m[i])[0])
             ikey = Chem.rdinchi.InchiToInchiKey(inchi[i])
             ikeys.append(ikey)
-            ikey1.append(ikey.split('-')[0])
-            ikey2.append(ikey.split('-')[1])
-            form.append(rdMD.CalcMolFormula(m[i]))
-            exmass.append(rdMD.CalcExactMolWt(m[i]))
+            if ikey!='':
+                ikey1.append(ikey.split('-')[0])
+                ikey2.append(ikey.split('-')[1])
+                form.append(rdMD.CalcMolFormula(m[i]))
+                exmass.append(rdMD.CalcExactMolWt(m[i]))
+            else:
+                ikey1.append('')
+                ikey2.append('')
+                form.append('')
+                exmass.append('')
         except:
             ikeys.append('')
             inchi.append('')
